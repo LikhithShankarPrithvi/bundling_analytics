@@ -27,7 +27,9 @@ const BundleDashboard: React.FC = () => {
 
 	useEffect(() => {
 		axios
-			.get<Product[]>('http://localhost:8000/api/products')
+			.get<Product[]>(
+				'https://bundling-analytics.onrender.com/api/products'
+			)
 			.then(res => {
 				setProducts(res.data)
 				console.log(res.data)
@@ -39,7 +41,7 @@ const BundleDashboard: React.FC = () => {
 		if (selectedProducts.length > 0) {
 			axios
 				.post<BundleRecommendation>(
-					'http://localhost:8000/api/recommend_bundle',
+					'https://bundling-analytics.onrender.com/api/recommend_bundle',
 					{
 						cart: selectedProducts,
 					}
