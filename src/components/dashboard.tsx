@@ -87,29 +87,6 @@ const BundleDashboard: React.FC = () => {
 	return (
 		<div className='p-4 grid grid-cols-1 md:grid-cols-2 gap-4'>
 			<div>
-				<h2 className='text-xl font-semibold mb-2'>Select Products</h2>
-				<div className='grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2'>
-					{products.map(product => (
-						<div
-							key={product.product_id}
-							onClick={() => toggleProduct(product.product_id)}
-							className={`cursor-pointer p-2 rounded-md border transition-all duration-200 hover:shadow-sm ${
-								selectedProducts.includes(product.product_id)
-									? 'border-2 border-blue-500 bg-blue-50'
-									: 'border-gray-200'
-							}`}
-						>
-							<h3 className='font-medium text-sm text-gray-600 truncate'>
-								{product.product_name}
-							</h3>
-							<p className='text-xs text-gray-500'>
-								₹{product.price.toLocaleString()}
-							</p>
-						</div>
-					))}
-				</div>
-			</div>
-			<div>
 				<div className='p-4 '>
 					<h1 className='text-2xl text-center font-bold text-gray-100'>
 						SmartBundle
@@ -258,6 +235,29 @@ const BundleDashboard: React.FC = () => {
 							</p>
 						</div> */}
 					</div>
+				</div>
+			</div>
+			<div>
+				<h2 className='text-xl font-semibold mb-2'>Select Products</h2>
+				<div className='grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2'>
+					{products.map(product => (
+						<div
+							key={product.product_id}
+							onClick={() => toggleProduct(product.product_id)}
+							className={`cursor-pointer p-2 rounded-md border transition-all duration-200 hover:shadow-sm ${
+								selectedProducts.includes(product.product_id)
+									? 'border-2 border-blue-500 bg-blue-50'
+									: 'border-gray-200'
+							}`}
+						>
+							<h3 className='font-medium text-sm text-gray-600 truncate'>
+								{product.product_name}
+							</h3>
+							<p className='text-xs text-gray-500'>
+								₹{product.price.toLocaleString()}
+							</p>
+						</div>
+					))}
 				</div>
 			</div>
 		</div>
