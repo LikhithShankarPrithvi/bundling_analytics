@@ -47,10 +47,12 @@ def evaluate_bundles_by_size(cart, synergy_df, products_df, max_bundle_size=3):
             maximum_expected_cart_price = cart_price*(1.8)
 
             discount_rate, discount_value = recommend_discount(cart_price, bundle_price, bundle_synergy)
-            expected_order_value = (cart_price + bundle_price - discount_value) * acceptance_prob
+            expected_order_value = (cart_price)+ (bundle_price - discount_value) * acceptance_prob
+            print(acceptance_prob)
             
              # AOV Uplift
-            aov_uplift = ((expected_order_value - cart_price) / cart_price) if cart_price else 0
+            aov_uplift = (((expected_order_value - cart_price)/cart_price)) if cart_price else 0
+            aov_uplift*=100
 
             if expected_order_value>maximum_expected_cart_price:
               continue

@@ -24,8 +24,11 @@ const BundleDashboard: React.FC = () => {
 	const [selectedProducts, setSelectedProducts] = useState<string[]>([])
 	const [recommendation, setRecommendation] =
 		useState<BundleRecommendation | null>(null)
+	const [loader, setLoader] = useState<Boolean>(false)
+	const [loader2, setLoader2] = useState<Boolean>(false)
 
 	useEffect(() => {
+		setLoader(true)
 		axios
 			.get<Product[]>(
 				'https://bundling-analytics.onrender.com/api/products'
@@ -33,7 +36,9 @@ const BundleDashboard: React.FC = () => {
 			.then(res => {
 				setProducts(res.data)
 				console.log(res.data)
+				setLoader(false)
 			})
+
 			.catch(err => console.error('Error loading products:', err))
 	}, [])
 
@@ -46,7 +51,10 @@ const BundleDashboard: React.FC = () => {
 						cart: selectedProducts,
 					}
 				)
-				.then(res => setRecommendation(res.data))
+				.then(res => {
+					setRecommendation(res.data)
+					setLoader2(false)
+				})
 				.catch(err =>
 					console.error('Error fetching recommendation:', err)
 				)
@@ -56,11 +64,24 @@ const BundleDashboard: React.FC = () => {
 	}, [selectedProducts])
 
 	const toggleProduct = (id: string): void => {
-		setSelectedProducts(prev =>
-			prev.includes(id) ? prev.filter(pid => pid !== id) : [...prev, id]
+		setSelectedProducts(prev => {
+			const updated = prev.includes(id)
+				? prev.filter(pid => pid !== id)
+				: [...prev, id]
+
+			// Turn on loader only if there's at least 1 product selected
+			setLoader2(updated.length > 0)
+
+			return updated
+		})
+	}
+	if (loader) {
+		return (
+			<div className='fixed inset-0 flex items-center justify-center z-50'>
+				<div className='h-16 w-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin' />
+			</div>
 		)
 	}
-
 	return (
 		<div className='p-4 grid grid-cols-1 md:grid-cols-2 gap-4'>
 			<div>
@@ -91,7 +112,12 @@ const BundleDashboard: React.FC = () => {
 				<h2 className='text-xl font-semibold mb-2'>
 					Bundle Recommendation
 				</h2>
-				{recommendation && recommendation.recommended_bundle ? (
+				{loader2 ? (
+					<div className='fixed inset-0 flex items-center justify-center z-50'>
+						<div className='h-16 w-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin' />
+					</div>
+				) : // <Loader2 /> // <-- Show loader while waiting
+				recommendation && recommendation.recommended_bundle ? (
 					<div className='bg-white p-6 rounded-lg shadow-lg'>
 						<h3 className='font-bold text-lg mb-4 text-gray-900'>
 							Recommended Bundle:
@@ -116,7 +142,7 @@ const BundleDashboard: React.FC = () => {
 						<div className='space-y-2 pt-4 border-t border-gray-200'>
 							<p className='flex justify-between'>
 								<span className='font-semibold text-gray-700'>
-									Discounte Percentage Offered:
+									Discount Percentage Offered:
 								</span>
 								<span className='text-blue-600 font-medium'>
 									₹
@@ -136,11 +162,23 @@ const BundleDashboard: React.FC = () => {
 							</p>
 							<p className='flex justify-between'>
 								<span className='font-semibold text-gray-700'>
-									AOV Uplift:
+									Expected Order Value:
 								</span>
 								<span className='text-purple-600 font-medium'>
 									₹
-									{recommendation.recommended_bundle.aov_uplift.toLocaleString()}
+									{recommendation.recommended_bundle.expected_value.toLocaleString()}
+								</span>
+							</p>
+							<p className='flex justify-between'>
+								<span className='font-semibold text-gray-700'>
+									AOV Uplift(%):
+								</span>
+								<span className='text-purple-600 font-medium'>
+									{(
+										recommendation.recommended_bundle
+											.aov_uplift * 100
+									).toLocaleString()}
+									%
 								</span>
 							</p>
 						</div>
